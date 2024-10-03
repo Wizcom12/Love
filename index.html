@@ -1,0 +1,440 @@
+
+
+  
+  
+  
+  
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Love Lure Game</title>
+  <script src="game.js" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-pink-100 text-center font-sans">
+
+  <div class="max-w-md mx-auto p-4">
+    <!-- Game Title -->
+    <h1 class="text-4xl font-bold text-red-500 mb-6">Play 🌹 or 💔 with wizcom ai! </h1>
+
+    <!-- Love Meter -->
+    <div id="loveMeter" class="mb-6">
+      <p class="text-xl">Love Meter:</p>
+      <div class="w-full bg-gray-300 h-4 rounded">
+        <div id="loveProgress" class="bg-red-500 h-4 rounded" style="width: 0%;"></div>
+      </div>
+    </div>
+
+    <!-- Gender Selection -->
+    <div id="genderSelection" class="mb-6">
+      <p class="text-xl mb-2">Play as a Boy or Gal?</p>
+      <button id="boyBtn" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 mr-2">Boy</button>
+      <button id="girlBtn" class="bg-pink-500 text-white py-2 px-4 rounded hover:bg-pink-700">Girl</button>
+    </div>
+
+    <!-- Game Question Section -->
+    <div id="game" class="space-y-4 hidden">
+      <p id="question" class="text-xl font-semibold"></p>
+
+      <!-- Two columns with two rows for answer options -->
+      <div class="grid grid-cols-2 gap-4">
+        <button id="option1" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"></button>
+        <button id="option2" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700"></button>
+        <button id="option3" class="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-700"></button>
+        <button id="option4" class="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-700"></button>
+      </div>
+    </div>
+
+    <!-- Final Result -->
+    <div id="result" class="mt-6 hidden">
+      <h2 class="text-3xl font-bold text-red-500 mb-4">Your Result:</h2>
+      <p id="resultText" class="text-lg"></p>
+      <button id="restartBtn" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 mt-4">Restart</button>
+    </div>
+  </div>
+  
+  
+  
+  <script>
+  
+  
+  
+  
+  
+
+
+  
+  
+  
+ const boyQuestions = [
+  { question: "What's your favorite way to relax after a long day?", options: ["Playing video games", "Watching movies", "Reading a book", "Going for a walk"], results: ["You love adventure!", "You enjoy storytelling.", "You value knowledge.", "You appreciate tranquility."] },
+  
+  { question: "Which type of cuisine do you enjoy most?", options: ["Italian", "Mexican", "Japanese", "Indian"], results: ["You love comfort food!", "You enjoy bold flavors.", "You appreciate artistry.", "You value spice."] },
+  
+  { question: "What's your ideal weekend activity?", options: ["Hiking with friends", "Hosting a game night", "Going to a concert", "Relaxing at home"], results: ["You love nature!", "You enjoy socializing.", "You appreciate live entertainment.", "You cherish peace."] },
+  
+  { question: "What’s your favorite childhood memory?", options: ["Building forts", "Riding bikes", "Playing sports", "Going to the beach"], results: ["You love creativity!", "You appreciate freedom.", "You enjoy teamwork.", "You cherish fun."] },
+  
+  { question: "If you could choose any job, what would it be?", options: ["Professional athlete", "Video game designer", "Travel blogger", "Teacher"], results: ["You love competition!", "You appreciate creativity.", "You seek adventure.", "You value knowledge."] },
+  
+  { question: "What's your favorite holiday?", options: ["New Year", "Christmas", "Halloween", "Independence Day"], results: ["You love fresh starts!", "You appreciate family time.", "You enjoy fun and spookiness.", "You value freedom."] },
+  
+  { question: "What do you usually do during your free time?", options: ["Watch TV", "Play sports", "Hang out with friends", "Learn something new"], results: ["You enjoy entertainment!", "You love competition.", "You cherish relationships.", "You value growth."] },
+  
+  { question: "What's your favorite type of music to listen to?", options: ["Hip-hop", "Rock", "Electronic", "Classical"], results: ["You love energy!", "You appreciate rebellion.", "You enjoy creativity.", "You value elegance."] },
+  
+  { question: "How do you feel about trying new foods?", options: ["I love it!", "I'm cautious", "I prefer familiar dishes", "I'm adventurous!"], results: ["You’re open-minded!", "You value comfort.", "You cherish simplicity.", "You love excitement!"] },
+  
+  { question: "What’s your favorite way to exercise?", options: ["Running", "Weightlifting", "Playing a sport", "Yoga"], results: ["You love speed!", "You appreciate strength.", "You enjoy teamwork.", "You value balance."] },
+  
+  { question: "Which superhero do you admire the most?", options: ["Superman", "Batman", "Spider-Man", "Iron Man"], results: ["You value hope!", "You appreciate justice.", "You enjoy relatability.", "You love innovation."] },
+  
+  { question: "What's your favorite way to communicate with friends?", options: ["Texting", "Video calls", "In-person", "Social media"], results: ["You value convenience!", "You appreciate connection.", "You cherish moments together.", "You love sharing."] },
+  
+  { question: "Which season do you look forward to the most?", options: ["Summer", "Winter", "Fall", "Spring"], results: ["You love warmth!", "You appreciate coziness.", "You enjoy change.", "You value renewal."] },
+  
+  { question: "If you could travel anywhere in the world, where would you go?", options: ["Japan", "Italy", "Australia", "Brazil"], results: ["You love culture!", "You appreciate history.", "You seek adventure.", "You enjoy festivities."] },
+  
+  { question: "What’s your dream home like?", options: ["A modern apartment", "A cozy cabin", "A beach house", "A penthouse"], results: ["You value convenience!", "You love nature.", "You enjoy relaxation.", "You appreciate luxury."] },
+  
+  { question: "What’s your ideal pet?", options: ["Dog", "Cat", "Bird", "Fish"], results: ["You value loyalty!", "You love independence.", "You appreciate freedom.", "You enjoy simplicity."] },
+  
+  { question: "How do you usually celebrate your birthday?", options: ["Big party", "Intimate dinner", "Adventure trip", "Quiet day"], results: ["You love being social!", "You appreciate closeness.", "You seek excitement.", "You value peace."] },
+  
+  { question: "What's your favorite board game?", options: ["Monopoly", "Chess", "Risk", "Clue"], results: ["You love strategy!", "You appreciate intellect.", "You enjoy competition.", "You value mystery."] },
+  
+  { question: "What’s your favorite drink?", options: ["Coffee", "Soda", "Juice", "Water"], results: ["You love energy!", "You enjoy sweetness.", "You value freshness.", "You appreciate health."] },
+  
+  { question: "What’s your go-to movie genre?", options: ["Action", "Comedy", "Drama", "Horror"], results: ["You love excitement!", "You appreciate humor.", "You enjoy storytelling.", "You seek thrills."] },
+  
+  { question: "If you could master any skill, what would it be?", options: ["Playing an instrument", "Cooking", "Sports", "Art"], results: ["You love creativity!", "You appreciate flavor.", "You enjoy competition.", "You value expression."] },
+  
+  { question: "What’s your favorite way to spend time with family?", options: ["Game night", "Movie marathon", "Outdoor activities", "Cooking together"], results: ["You love bonding!", "You appreciate laughter.", "You seek adventure.", "You value teamwork."] },
+  
+  { question: "How do you prefer to learn new things?", options: ["Watching videos", "Reading", "Hands-on practice", "Attending classes"], results: ["You love visuals!", "You value knowledge.", "You enjoy experience.", "You appreciate structure."] },
+  
+  { question: "What’s your favorite type of dessert?", options: ["Chocolate cake", "Ice cream", "Fruit tart", "Brownies"], results: ["You enjoy indulgence!", "You love coolness.", "You appreciate freshness.", "You value richness."] },
+  
+  { question: "Which historical figure do you admire?", options: ["Albert Einstein", "Martin Luther King Jr.", "Nelson Mandela", "Leonardo da Vinci"], results: ["You value intellect!", "You appreciate justice.", "You love change.", "You admire creativity."] },
+  
+  { question: "What’s your favorite way to stay informed?", options: ["News apps", "Social media", "Podcasts", "TV news"], results: ["You value convenience!", "You appreciate trends.", "You love learning.", "You enjoy visuals."] },
+  
+  { question: "What’s your favorite thing to do on a rainy day?", options: ["Watch movies", "Read a book", "Play games", "Cook"], results: ["You love entertainment!", "You value knowledge.", "You enjoy fun.", "You appreciate creativity."] },
+  
+  { question: "Which technology are you most excited about?", options: ["Artificial Intelligence", "Virtual Reality", "Robotics", "Space exploration"], results: ["You love innovation!", "You appreciate immersion.", "You value advancement.", "You dream big."] },
+  
+  { question: "What’s your favorite way to express yourself?", options: ["Writing", "Art", "Music", "Sports"], results: ["You value creativity!", "You enjoy expression.", "You love rhythm.", "You seek competition."] },
+  
+  { question: "What type of stories do you enjoy most?", options: ["Adventure", "Mystery", "Romance", "Fantasy"], results: ["You love excitement!", "You appreciate puzzles.", "You seek connection.", "You enjoy escapism."] },
+  
+  { question: "How do you usually handle stress?", options: ["Exercise", "Talking to friends", "Listening to music", "Meditating"], results: ["You value health!", "You cherish relationships.", "You appreciate creativity.", "You seek peace."] },
+  
+  { question: "What’s your go-to karaoke song?", options: ["Bohemian Rhapsody", "Sweet Caroline", "Shake It Off", "Wonderwall"], results: ["You love classics!", "You appreciate nostalgia.", "You enjoy fun!", "You value depth."] },
+  
+  { question: "What’s your favorite fictional character?", options: ["Sherlock Holmes", "Harry Potter", "Tony Stark", "Frodo Baggins"], results: ["You value intellect!", "You love bravery.", "You appreciate wit.", "You enjoy adventure."] },
+  
+  { question: "What motivates you the most?", options: ["Passion", "Success", "Adventure", "Family"], results: ["You love enthusiasm!", "You appreciate achievement.", "You seek thrills.", "You value relationships."] },
+  
+ 
+  { question: "How do you feel about public speaking?", options: ["I love it!", "I'm okay with it", "I get nervous", "I avoid it"], results: ["You’re confident!", "You appreciate challenge.", "You value self-awareness.", "You prefer comfort."] },
+  
+  { question: "What’s your favorite form of social media?", options: ["Instagram", "Twitter", "Facebook", "TikTok"], results: ["You love visuals!", "You appreciate brevity.", "You value connections.", "You enjoy creativity."] },
+  
+  { question: "How do you prefer to spend a day off?", options: ["Exploring new places", "Catching up on sleep", "Working on hobbies", "Hanging out with friends"], results: ["You love adventure!", "You value rest.", "You appreciate growth.", "You cherish relationships."] },
+  
+  { question: "What’s your favorite way to celebrate achievements?", options: ["Going out with friends", "Treating myself", "Throwing a party", "Sharing on social media"], results: ["You love socializing!", "You appreciate self-care.", "You enjoy being the center of attention.", "You value connections."] },
+  
+  { question: "What kind of movies do you dislike?", options: ["Horror", "Romantic", "Documentaries", "Musicals"], results: ["You value thrill!", "You appreciate depth.", "You enjoy fiction.", "You love action."] },
+  
+  { question: "How do you like your coffee?", options: ["Black", "With milk", "I don’t drink coffee", "Sweetened"], results: ["You enjoy simplicity!", "You appreciate comfort.", "You prefer freshness.", "You love indulgence."] },
+  
+  { question: "What’s your favorite type of vacation?", options: ["Adventure trip", "Beach relaxation", "Cultural exploration", "Road trip"], results: ["You love excitement!", "You appreciate calm.", "You enjoy learning.", "You value freedom."] },
+  
+  { question: "What’s your favorite TV show genre?", options: ["Drama", "Comedy", "Reality", "Sci-Fi"], results: ["You value storytelling!", "You enjoy laughter.", "You appreciate authenticity.", "You love imagination."] },
+  
+  { question: "How do you feel about learning new languages?", options: ["Excited!", "Challenging but rewarding", "Not interested", "I'd like to try"], results: ["You love challenges!", "You appreciate growth.", "You value comfort.", "You’re open to possibilities."] },
+  
+  { question: "What’s your go-to snack?", options: ["Chips", "Chocolate", "Fruit", "Nuts"], results: ["You enjoy crunch!", "You love sweetness.", "You value health.", "You appreciate protein."] },
+  
+  { question: "How do you feel about surprises?", options: ["I love them!", "They're okay", "I prefer to know", "I dislike them"], results: ["You’re adventurous!", "You appreciate spontaneity.", "You value stability.", "You prefer predictability."] },
+  
+  { question: "What’s your favorite form of exercise?", options: ["Running", "Swimming", "Cycling", "Team sports"], results: ["You love speed!", "You appreciate relaxation.", "You enjoy freedom.", "You value teamwork."] },
+  
+  { question: "What’s your favorite kind of weather?", options: ["Sunny", "Rainy", "Snowy", "Windy"], results: ["You love warmth!", "You appreciate freshness.", "You enjoy calm.", "You value adventure."] },
+  
+  { question: "What’s your favorite way to spend time alone?", options: ["Reading", "Gaming", "Working out", "Meditating"], results: ["You love knowledge!", "You appreciate entertainment.", "You value health.", "You seek peace."] },
+  
+  { question: "What type of art do you enjoy most?", options: ["Painting", "Photography", "Sculpture", "Digital art"], results: ["You appreciate creativity!", "You love visuals.", "You value form.", "You enjoy innovation."] },
+  
+  { question: "What’s your dream vehicle?", options: ["Sports car", "SUV", "Motorcycle", "Electric car"], results: ["You love speed!", "You appreciate versatility.", "You value freedom.", "You care about the environment."] },
+  
+  { question: "How do you feel about technology?", options: ["I love it!", "It's useful", "I prefer simplicity", "I don't like it"], results: ["You’re enthusiastic!", "You appreciate convenience.", "You value simplicity.", "You prefer tradition."] },
+  
+  { question: "What’s your favorite type of podcast?", options: ["True crime", "Comedy", "Self-improvement", "News"], results: ["You love mystery!", "You appreciate laughter.", "You value growth.", "You seek information."] },
+  
+  { question: "How do you feel about teamwork?", options: ["I thrive in it!", "It's okay", "I prefer solo work", "I dislike it"], results: ["You love collaboration!", "You appreciate balance.", "You value independence.", "You prefer autonomy."] },
+  
+  { question: "What’s your favorite way to show appreciation?", options: ["Gifts", "Words of affirmation", "Acts of service", "Quality time"], results: ["You value thoughtfulness!", "You appreciate kindness.", "You love actions.", "You cherish moments together."] },
+  
+  { question: "What’s your go-to comfort food?", options: ["Pizza", "Mac and cheese", "Ice cream", "Fried chicken"], results: ["You love indulgence!", "You appreciate nostalgia.", "You value sweetness.", "You enjoy warmth."] },
+  
+  { question: "How do you like to plan your day?", options: ["With a to-do list", "Spontaneously", "Using an app", "I don't plan"], results: ["You value organization!", "You appreciate spontaneity.", "You love efficiency.", "You prefer flexibility."] },
+  
+  { question: "How do you feel about change?", options: ["I embrace it!", "It's challenging", "I prefer stability", "I resist it"], results: ["You love growth!", "You appreciate adaptability.", "You value comfort.", "You prefer the familiar."] },
+  
+  { question: "What’s your favorite social activity?", options: ["Going to parties", "Hiking with friends", "Dining out", "Game nights"], results: ["You love socializing!", "You appreciate nature.", "You enjoy culinary experiences.", "You value fun."] },
+  
+  { question: "What’s your favorite childhood game?", options: ["Hide and seek", "Tag", "Building blocks", "Video games"], results: ["You love adventure!", "You enjoy playfulness.", "You value creativity.", "You appreciate excitement."] },
+  
+  { question: "How do you feel about socializing with new people?", options: ["I love it!", "I'm okay", "I prefer familiar faces", "I dislike it"], results: ["You’re outgoing!", "You appreciate connections.", "You value comfort.", "You prefer known companions."] },
+  
+  { question: "What’s your go-to method for relaxing?", options: ["Watching TV", "Listening to music", "Exercising", "Meditating"], results: ["You enjoy entertainment!", "You love rhythm.", "You value health.", "You seek tranquility."] }
+];
+
+  
+  
+  
+  
+  
+
+const girlQuestions = [
+  { question: "If I were to choose a flower for you, which would you prefer?", options: ["Rose", "Lily", "Tulip", "Sunflower"], results: ["You love romance!", "You appreciate elegance.", "You enjoy creativity.", "You value warmth."] },
+
+  { question: "Do you believe in love at first sight?", options: ["Yes", "No", "Maybe", "Not sure"], results: ["You’re a dreamer!", "You value connection.", "You’re open to possibilities.", "You prefer to take time."] },
+
+  { question: "If I planned a surprise for you, what would you like most?", options: ["A candlelight dinner", "A day at the beach", "A fun adventure", "A cozy movie night"], results: ["You love intimacy!", "You appreciate nature.", "You enjoy excitement!", "You cherish comfort."] },
+
+  { question: "Would you prefer sweet love notes or unexpected hugs?", options: ["Love notes", "Hugs", "Both", "Neither"], results: ["You enjoy thoughtful gestures!", "You love physical closeness!", "You appreciate both!", "You prefer other ways of affection."] },
+
+  { question: "If I loved a girl of your type, would you love me back?", options: ["Yes", "No", "Maybe", "Depends"], results: ["You’re ready to open up!", "You’re thoughtful about love.", "You’re considering the idea.", "You value connection deeply."] },
+
+  { question: "What’s your idea of a perfect date?", options: ["Dinner under the stars", "A long walk", "Watching a sunset", "Exploring the city"], results: ["You love romance!", "You value deep conversations.", "You appreciate beauty.", "You enjoy adventure."] },
+
+  { question: "How do you feel when someone writes you a heartfelt message?", options: ["Touched", "Flattered", "Indifferent", "It depends"], results: ["You cherish emotions!", "You appreciate admiration.", "You value action over words.", "You reflect before reacting."] },
+
+  { question: "Would you smile if I said you look amazing today?", options: ["Yes", "Maybe", "No", "Why ask?"], results: ["You’re ready to smile!", "You like compliments!", "You prefer subtlety.", "You’re curious about me."] },
+
+  { question: "Do you believe in soulmates?", options: ["Yes", "No", "Not sure", "Kind of"], results: ["You’re a romantic at heart!", "You value real connections.", "You’re open to the idea.", "You appreciate destiny!"] },
+
+  { question: "If I planned a surprise getaway, would you be excited?", options: ["Definitely", "Maybe", "Not really", "Depends on the place"], results: ["You love surprises!", "You appreciate spontaneity.", "You prefer knowing plans.", "You enjoy thinking it through."] },
+
+  { question: "What makes your heart feel warm?", options: ["A sweet message", "A kind gesture", "A shared moment", "A surprise gift"], results: ["You value words!", "You appreciate kindness.", "You love connection!", "You enjoy surprises!"] },
+
+  { question: "Would you like to receive small, thoughtful gifts from someone who admires you?", options: ["Yes, of course!", "Maybe", "Not really", "It depends"], results: ["You love gestures of affection!", "You’re open to it!", "You prefer actions over gifts.", "You appreciate the thought."] },
+
+  { question: "How would you feel if someone sang a song for you?", options: ["Flattered", "Shy", "Indifferent", "Embarrassed"], results: ["You love attention!", "You appreciate sweetness.", "You’re calm under pressure.", "You prefer private moments."] },
+
+  { question: "Would you feel special if someone remembered little details about you?", options: ["Yes", "Maybe", "No", "Not sure"], results: ["You appreciate thoughtfulness!", "You value connection!", "You prefer other forms of affection.", "You reflect before reacting."] },
+
+  { question: "What’s your favorite way to say 'I miss you'?", options: ["A call", "A message", "A visit", "A surprise"], results: ["You love hearing voices!", "You appreciate words.", "You value presence.", "You love unexpected gestures!"] },
+
+  { question: "If we went on a road trip, where would you want to go?", options: ["The mountains", "The beach", "A new city", "A quiet village"], results: ["You appreciate nature!", "You love the ocean.", "You value adventure.", "You seek peace."] },
+
+  { question: "Would you feel excited if I planned a surprise just for you?", options: ["Yes!", "Maybe", "Not really", "Depends on the surprise"], results: ["You love surprises!", "You’re open to fun!", "You prefer simple gestures.", "You enjoy thoughtfulness!"] },
+
+  { question: "What would make you smile right now?", options: ["A compliment", "A kind word", "A small gift", "A sweet memory"], results: ["You appreciate admiration!", "You value warmth.", "You love gestures!", "You cherish the past!"] },
+
+  { question: "If I told you my deepest feelings, would you listen?", options: ["Yes, always", "Maybe", "Not sure", "Depends"], results: ["You’re ready to hear!", "You value communication!", "You reflect deeply.", "You appreciate openness."] },
+
+  { question: "Do you believe actions speak louder than words?", options: ["Yes", "No", "Sometimes", "Depends"], results: ["You value action!", "You appreciate words!", "You seek balance!", "You’re thoughtful in love."] },
+
+  { question: "Would you feel touched if I remembered your favorite things?", options: ["Definitely", "Maybe", "Not really", "It depends"], results: ["You love attention to detail!", "You appreciate small gestures!", "You prefer other forms of affection.", "You value thoughtfulness!"] },
+
+  { question: "How do you feel when someone admires you?", options: ["Flattered", "Shy", "Indifferent", "Embarrassed"], results: ["You appreciate attention!", "You value privacy!", "You’re calm under pressure!", "You’re thoughtful about it."] },
+
+  { question: "What would make you feel special today?", options: ["A sweet message", "A thoughtful gift", "A fun outing", "Some quality time"], results: ["You love words!", "You value thoughtfulness!", "You enjoy adventure!", "You cherish togetherness!"] },
+
+  { question: "Would you feel appreciated if I told you how much you mean to me?", options: ["Yes", "Maybe", "Not sure", "Depends"], results: ["You’re ready for affection!", "You appreciate honesty!", "You value deeper connections!", "You reflect deeply."] },
+
+  { question: "If I told you I liked you, would you feel the same?", options: ["Yes", "Maybe", "No", "Not sure"], results: ["You’re open to love!", "You’re thinking about it!", "You prefer friendship!", "You appreciate sincerity!"] },
+  
+  
+ 
+  { question: "If I were to make you a playlist, what genre would you want?", options: ["Romantic", "Chill", "Upbeat", "Mysterious"], results: ["You love heartfelt melodies!", "You appreciate relaxation.", "You enjoy fun vibes!", "You like intrigue."] },
+
+  { question: "What makes you feel most loved?", options: ["Thoughtful gifts", "Acts of service", "Quality time", "Words of affirmation"], results: ["You appreciate gestures!", "You value actions!", "You cherish time together!", "You love compliments!"] },
+
+  { question: "Would you be excited if I asked you out on a special date?", options: ["Absolutely!", "Maybe", "Not really", "I’m unsure"], results: ["You’re ready for adventure!", "You’re open to it!", "You prefer casual outings.", "You appreciate thoughtfulness."] },
+
+  { question: "Do you believe friendships can turn into love?", options: ["Yes", "No", "Maybe", "Depends"], results: ["You’re a romantic!", "You’re practical!", "You’re open to possibilities!", "You value friendship."] },
+
+  { question: "How do you feel about surprise gestures of love?", options: ["I love them!", "They’re nice", "Not for me", "It depends"], results: ["You appreciate spontaneity!", "You enjoy kindness!", "You prefer predictability.", "You’re thoughtful about affection."] },
+
+  { question: "If I sent you a cute message, how would you react?", options: ["Smile", "Reply instantly", "Blush", "Ignore"], results: ["You love sweet surprises!", "You appreciate connection!", "You feel shy!", "You value space."] },
+
+  { question: "What’s your favorite way to express love?", options: ["Through words", "Small gifts", "Quality time", "Acts of kindness"], results: ["You love communicating!", "You value thoughtfulness!", "You cherish moments together!", "You appreciate actions!"] },
+
+  { question: "Would you enjoy a romantic movie night?", options: ["Absolutely!", "Maybe", "Not really", "Depends on the movie"], results: ["You love romance!", "You appreciate cozy moments!", "You enjoy stories!", "You value choice!"] },
+
+  { question: "How do you feel about public displays of affection?", options: ["I love them!", "They’re okay", "Not for me", "Depends on the situation"], results: ["You enjoy romance!", "You value connection!", "You prefer privacy.", "You’re thoughtful about comfort."] },
+
+  { question: "If I complimented you, would it make your day?", options: ["Yes, definitely!", "Maybe", "Not really", "It depends"], results: ["You appreciate kindness!", "You enjoy validation!", "You value self-assurance.", "You reflect on compliments."] },
+
+  { question: "What kind of adventures do you dream about?", options: ["Traveling to new places", "Trying new foods", "Meeting new people", "Experiencing new cultures"], results: ["You love exploration!", "You appreciate variety!", "You cherish connection!", "You value experience!"] },
+
+  { question: "If I wrote you a poem, how would you feel?", options: ["Flattered", "Shy", "Indifferent", "Curious"], results: ["You love creativity!", "You appreciate heartfelt words!", "You value thoughtfulness.", "You’re intrigued!"] },
+
+  { question: "What would you do if someone sang your favorite song to you?", options: ["Join in", "Smile", "Be shy", "Enjoy it quietly"], results: ["You love sharing moments!", "You appreciate music!", "You’re reserved!", "You value connection!"] },
+
+  { question: "How do you feel about love letters?", options: ["I adore them!", "They’re nice", "Not for me", "They’re old-fashioned"], results: ["You’re a romantic!", "You appreciate thoughtfulness!", "You prefer digital.", "You value nostalgia."] },
+
+  { question: "What makes you feel most cherished?", options: ["Quality time", "Sweet surprises", "Thoughtful words", "Acts of service"], results: ["You value presence!", "You enjoy surprises!", "You love heartfelt gestures!", "You appreciate kindness!"] },
+
+  { question: "Would you like to share secrets with someone special?", options: ["Absolutely!", "Maybe", "Not really", "It depends"], results: ["You cherish intimacy!", "You’re open to connection!", "You prefer privacy.", "You value trust."] },
+
+  { question: "If I made you a dessert, would you share it with me?", options: ["Of course!", "Maybe", "Not really", "Depends on the dessert"], results: ["You love sharing!", "You appreciate generosity!", "You’re picky!", "You value your choices."] },
+
+  { question: "Do you think laughter is important in a relationship?", options: ["Yes, definitely!", "Somewhat", "Not really", "It depends"], results: ["You appreciate joy!", "You value fun!", "You prefer seriousness.", "You’re thoughtful about connection."] },
+
+  { question: "If I told you a secret about myself, would you keep it?", options: ["Of course!", "Maybe", "Not really", "Depends on the secret"], results: ["You value trust!", "You’re open to sharing!", "You prefer distance.", "You value discretion!"] },
+
+  { question: "How do you feel about surprises in a relationship?", options: ["I love them!", "They’re nice", "Not for me", "Depends on the surprise"], results: ["You enjoy spontaneity!", "You appreciate thoughtfulness!", "You prefer stability.", "You value predictability."] },
+
+  { question: "What would you do if I wrote you a song?", options: ["Cry tears of joy", "Smile", "Be shy", "Ignore it"], results: ["You love creativity!", "You appreciate gestures!", "You feel shy!", "You’re thoughtful about it."] },
+
+  { question: "How do you feel when someone remembers your birthday?", options: ["Loved", "Happy", "Indifferent", "It doesn’t matter"], results: ["You cherish connection!", "You appreciate attention!", "You value relationships!", "You reflect on it."] },
+
+  { question: "If I were to plan a romantic picnic, would you be excited?", options: ["Yes, very!", "Maybe", "Not really", "Depends on the weather"], results: ["You love romance!", "You appreciate effort!", "You prefer indoor dates.", "You’re thoughtful about plans."] }, 
+
+
+  
+  
+  
+
+  { question: "Would you be excited to share special moments with someone who truly cares?", options: ["Definitely", "Maybe", "Not sure", "Depends"], results: ["You love connection!", "You appreciate closeness!", "You value time!", "You’re thoughtful about relationships!"] }
+];
+
+
+
+let selectedGender = '';
+let currentQuestions = [];
+let currentIndex = 0;
+let loveMeter = 0;
+let askedQuestions = new Set();
+
+// HTML elements
+const genderSelection = document.getElementById('genderSelection');
+const gameSection = document.getElementById('game');
+const questionText = document.getElementById('question');
+const optionButtons = [
+    document.getElementById('option1'),
+    document.getElementById('option2'),
+    document.getElementById('option3'),
+    document.getElementById('option4')
+];
+const loveProgress = document.getElementById('loveProgress');
+const resultSection = document.getElementById('result');
+const resultText = document.getElementById('resultText');
+const restartBtn = document.getElementById('restartBtn');
+
+// Gender selection buttons
+const boyBtn = document.getElementById('boyBtn');
+const girlBtn = document.getElementById('girlBtn');
+
+// Handle gender selection
+boyBtn.addEventListener('click', () => {
+    selectedGender = 'boy';
+    currentQuestions = [...boyQuestions]; // Copy to avoid modifying original array
+    startGame();
+});
+
+girlBtn.addEventListener('click', () => {
+    selectedGender = 'girl';
+    currentQuestions = [...girlQuestions]; // Copy to avoid modifying original array
+    startGame();
+});
+
+function startGame() {
+    // Hide gender selection, show game section
+    genderSelection.classList.add('hidden');
+    gameSection.classList.remove('hidden');
+    loveMeter = 50; // Start love meter at 50%
+    askedQuestions.clear(); // Reset asked questions
+    updateLoveMeter();
+    askRandomQuestion();
+}
+
+// Ask a random question without repeating
+function askRandomQuestion() {
+    if (askedQuestions.size >= currentQuestions.length) {
+        endGame();
+        return;
+    }
+
+    // Get a random index and ensure it's a new question
+    let randomIndex;
+    do {
+        randomIndex = Math.floor(Math.random() * currentQuestions.length);
+    } while (askedQuestions.has(randomIndex));
+
+    // Mark the question as asked
+    askedQuestions.add(randomIndex);
+    currentIndex = randomIndex;
+
+    const currentQuestion = currentQuestions[currentIndex];
+    questionText.textContent = currentQuestion.question;
+    optionButtons.forEach((button, index) => {
+        button.textContent = currentQuestion.options[index];
+        button.onclick = () => handleAnswer(index);
+    });
+}
+
+// Handle the answer and update the love meter
+function handleAnswer(selectedOptionIndex) {
+    const currentQuestion = currentQuestions[currentIndex];
+    const result = currentQuestion.results[selectedOptionIndex];
+
+    // Based on the answer, adjust the love meter
+    if (selectedOptionIndex === 0 || selectedOptionIndex === 1) {
+        loveMeter += 10; // Positive answers
+    } else {
+        loveMeter -= 10; // Negative answers
+    }
+
+    updateLoveMeter();
+    askRandomQuestion();
+}
+
+// Update the love meter UI
+function updateLoveMeter() {
+    loveMeter = Math.max(0, Math.min(100, loveMeter)); // Keep meter between 0 and 100
+    loveProgress.style.width = `${loveMeter}%`;
+}
+
+// End the game and show the result
+function endGame() {
+    gameSection.classList.add('hidden');
+    resultSection.classList.remove('hidden');
+
+    let finalMessage = '';
+    if (loveMeter >= 80) {
+        finalMessage = "You're the love of their life!";
+    } else if (loveMeter >= 50) {
+        finalMessage = "They're interested, but you need to work a little more.";
+    } else if (loveMeter >= 30) {
+        finalMessage = "It's complicated, but not impossible!";
+    } else {
+        finalMessage = "It's a lost cause, but you gave it a shot!";
+    }
+
+    resultText.textContent = finalMessage;
+}
+
+// Restart the game
+restartBtn.addEventListener('click', () => {
+    resultSection.classList.add('hidden');
+    genderSelection.classList.remove('hidden');
+    loveMeter = 0;
+    updateLoveMeter();
+});
+
+
+
+
+  </script>
+  
+  
+</body>
+</html>
